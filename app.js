@@ -248,12 +248,15 @@ function cargarDetalleVotadas(){
 	const titulo = "Más Votadas"
 	const totalPeli = '\nTotal de películas en cartelera​: ​(' + movies.length + ')';
 	
-	const listadoPeli = '\n\nListados de películas:'
+	const listadoPeli = '\n\nListados de películas:';
 	
 
-
 	let masValoradas = movies.filter(movie => movie.vote_average >= 7);
-	let sumaDeValores = masValoradas.reduce((previo, actual) => actual += previo);
+	console.log(masValoradas)
+	let masValoradasNumero = masValoradas.map(movie=>movie.vote_average);
+	console.log(masValoradasNumero)
+	let sumaDeValores = masValoradasNumero.reduce((previo, actual) => actual += previo);
+	console.log(sumaDeValores)
 	let resultado = (sumaDeValores / masValoradas.length);
 	let promedio = resultado.toFixed(2);
 
@@ -266,12 +269,32 @@ function cargarDetalleVotadas(){
 
 	masValoradas.forEach(elemento => tituloConVotacionConResena += ("\n\n"+"-"+ elemento.title + "\nEl rating es : " + elemento.vote_average + "\n\n" + elemento.overview  + "\n"));
 
-	return   sumaDeValores+ totalPeliConVotacion + promedioVotacion +"\n"+  tituloConVotacionConResena  // sumaDeValores me da [object Object].....
+	return  titulo+ totalPeliConVotacion + promedioVotacion +"\n"+  tituloConVotacionConResena  // sumaDeValores me da [object Object].....
 	
 
 }
 
+function cargarDetalleSucursales(){
+	const titulo = "Nuestras salas\n";
+	const totalSalas="El total de salas es: " + theaters.length;
+	nombreConDireccionConDescripcion ="";
+	theaters.forEach(elemento => nombreConDireccionConDescripcion += "\n" +"--" + elemento.name +"\n" +"La dirección es:  " + elemento.address + "\n" +  elemento.description + "\n");
+	return titulo + totalSalas + nombreConDireccionConDescripcion;
+}
 
+function cargarDetalleContacto(){
+	const titulo= "Contáctanos";
+	const texto = "\n\n ¿Tenés algo para contarnos? Nos encanta escuchar a nuestros clientes. \n\n Si deseas contactarnos podés escribirnos al siguiente email: dhmovies@digitalhouse.com o en las redes sociales.\n\n Envianos tu consulta,sugerencia o reclamo y será respondido a la brevedad posible.\n\n Recordá que también podes consultar la sección de Preguntas Frecuentes para obtener respuestas inmediatas a los problemas más comunes.";
+	return titulo + texto;
+}
+
+function cargarDetallePreguntasFrecuentes(){
+	const titulo = "Preguntas Frecuentes.";
+	const totalPreguntas = "\nTotal de preguntas realizadas: " + faqs.length;
+	preguntaRespuesta="";
+	faqs.forEach(elemento => preguntaRespuesta += "\n--Pregunta: " + elemento.faq_title + "\n\nRespuesta : " +elemento.faq_answer +"\n\n\n");
+	return titulo + totalPreguntas + preguntaRespuesta;
+}
 
 /** 
  *  Luego llamamos a una de las funciones que el módulo http ofrece: createServer. 
@@ -311,16 +334,19 @@ const server = http.createServer((req, res) => {
 			break;
 		case '/mas-votadas':
 			let detalleVotadas = cargarDetalleVotadas();
-			res.end('Más Votadas\n' + detalleVotadas);
+			res.end(detalleVotadas);
 			break;
 		case '/sucursales':
-			res.end('Sucursales');
+			let detalleSucursales= cargarDetalleSucursales();
+			res.end(detalleSucursales);
 			break;
 		case '/contacto':
-			res.end('Contacto');
+			let detalleContacto = cargarDetalleContacto();
+			res.end(detalleContacto);
 			break;
 		case '/preguntas-frecuentes':
-			res.end('Preguntas Frecuentes');
+			let detallePreguntasFrecuentes = cargarDetallePreguntasFrecuentes();
+			res.end(detallePreguntasFrecuentes);
 			break;
 		default:
 			res.end('404 not found')
